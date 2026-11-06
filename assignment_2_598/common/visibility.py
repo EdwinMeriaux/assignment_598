@@ -15,7 +15,7 @@ from PIL import Image
 from .geometry import known_distances, line_clear, neighbors, valid_corners
 
 ROOT = Path(__file__).resolve().parents[1]
-WORLD_ROOT = ROOT / "Detereministic_ALGO/new_true_world_data/divided_world_1"
+WORLD_ROOT = ROOT / "worlds/divided_world_1"
 FORMAT_VERSION = 1
 
 

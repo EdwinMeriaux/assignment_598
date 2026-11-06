@@ -15,7 +15,7 @@ from types import MappingProxyType
 if __package__ in (None, ""):
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from common.visibility import ROOT, Sensor, map_files
+from common.visibility import ROOT, Sensor, map_files, prepare_map
 from common.visuals import draw_frame, save_frames
 from main_algo.corner_selection import Observation, choose_corner, random_corner
 
@@ -30,11 +30,10 @@ def make_observation(sensor, positions, step):
 
 def run_cadence(map_path, seed=0, policy="random", step_limit=1000,
                 max_agents=1000, deployment_point=None, deployment_seed=0,
-                output=None, quiet=False, selector=None):
+                output=None, quiet=False):
     """Run a seeded policy. Agent counts INCLUDE the fixed deployment point.
 
     Separate deployment and action seeds hold the start fixed across policies.
-    The optional selector is useful for programmatic experiments and tests.
     Invalid policy outputs raise ValueError before any deployment occurs.
     """
     if step_limit < 0 or max_agents < 1:
@@ -51,7 +50,7 @@ def run_cadence(map_path, seed=0, policy="random", step_limit=1000,
             raise ValueError(f"Deployment point {deployment_point} is not free space.")
         positions = [deployment_point]
         rng = random.Random(seed)
-        selection = selector if selector is not None else (random_corner if policy == "random" else choose_corner)
+        selection = random_corner if policy == "random" else choose_corner
         trace, frames, step = [], [], 0
         observation, candidates = make_observation(sensor, positions, step)
         while True:
@@ -131,6 +130,7 @@ def main():
     parser.add_argument("--output", type=Path, default=ROOT / "outputs/latest")
     args = parser.parse_args()
     try:
+        prepare_map(args.map)
         result = run_cadence(args.map, args.seed, args.policy, args.step_limit,
                              args.max_agents, args.deployment, args.deployment_seed, args.output)
     except (OSError, ValueError, KeyError, RuntimeError) as error:
