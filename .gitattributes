@@ -1,0 +1,9 @@
+# CSV output uses standard CRLF line endings.
+*.csv whitespace=cr-at-eol
+
+# Preserve third-party license notices verbatim.
+assignment_2_598/THIRD_PARTY_NOTICES.txt -whitespace
+
+# Shelves are generated data, including their text index files.
+*.shelf.dat binary
+*.shelf.dir binary
